@@ -1,0 +1,148 @@
+================================================================
+  BIBLIOTECA DIGITAL - ESCUELA SECUNDARIA N.7
+  GUIA DE INSTALACION
+================================================================
+
+REQUISITOS
+----------
+- PHP >= 8.1
+- Composer (https://getcomposer.org)
+- MariaDB >= 10.4 o MySQL >= 8.0
+- Extensiones PHP: BCMath, Ctype, Fileinfo, JSON, Mbstring,
+  OpenSSL, PDO, PDO_MySQL, Tokenizer, XML
+
+================================================================
+
+PASO 1: INSTALAR DEPENDENCIAS
+------------------------------
+Abra una terminal en la carpeta del proyecto y ejecute:
+
+    composer install
+
+================================================================
+
+PASO 2: CONFIGURAR EL ENTORNO
+-------------------------------
+Copie el archivo de ejemplo y genere la clave:
+
+    cp .env.example .env
+    php artisan key:generate
+
+Edite el archivo .env con sus datos de conexion:
+
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=biblioteca_sec7
+    DB_USERNAME=su_usuario
+    DB_PASSWORD=su_contrasena
+
+================================================================
+
+PASO 3: CREAR LA BASE DE DATOS
+-------------------------------
+Opcion A - Usando Laravel (RECOMENDADO):
+
+    1. Cree la base de datos manualmente en MariaDB:
+       CREATE DATABASE biblioteca_sec7 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+    2. Ejecute las migraciones:
+       php artisan migrate
+
+    3. Cree el usuario administrador:
+       php artisan db:seed
+
+Opcion B - Usando el script SQL directo:
+
+    mysql -u root -p < database/sql/create_database.sql
+
+================================================================
+
+PASO 4: CONFIGURAR ALMACENAMIENTO
+-----------------------------------
+Cree el enlace simbolico para los archivos publicos:
+
+    php artisan storage:link
+
+Asegurese de que la carpeta storage tenga permisos de escritura:
+
+    chmod -R 775 storage
+    chmod -R 775 bootstrap/cache
+
+================================================================
+
+PASO 5: CONFIGURAR CORREO (para recuperacion de contrasena)
+------------------------------------------------------------
+Edite el archivo .env con los datos de su servidor SMTP:
+
+    MAIL_MAILER=smtp
+    MAIL_HOST=smtp.gmail.com
+    MAIL_PORT=587
+    MAIL_USERNAME=su_correo@gmail.com
+    MAIL_PASSWORD=su_password_de_aplicacion
+    MAIL_ENCRYPTION=tls
+    MAIL_FROM_ADDRESS="biblioteca@sec7.edu.ar"
+    MAIL_FROM_NAME="Biblioteca SEC7"
+
+Si usa Gmail, necesita generar una "Contrasena de aplicacion"
+en la configuracion de su cuenta Google.
+
+================================================================
+
+PASO 6: INICIAR EL SERVIDOR
+-----------------------------
+Para desarrollo local:
+
+    php artisan serve
+
+Acceda a: http://localhost:8000
+
+================================================================
+
+CREDENCIALES POR DEFECTO
+--------------------------
+    Email:      admin@sec7.edu.ar
+    Contrasena: sec7admin2024
+
+    IMPORTANTE: Cambie la contrasena inmediatamente despues
+    del primer inicio de sesion desde el panel de administracion.
+
+================================================================
+
+ESTRUCTURA DE ROLES
+--------------------
+1. ADMINISTRATIVO (admin / bibliotecaria):
+   - Ver, editar, eliminar TODOS los archivos
+   - Dar de alta, editar y eliminar usuarios (docentes)
+   - Subir libros y audiolibros
+   - Acceso al panel de administracion
+
+2. DOCENTE:
+   - Subir libros y audiolibros
+   - Editar solo SUS PROPIOS archivos
+   - No puede editar ni eliminar archivos de otros
+   - No tiene acceso al panel de administracion
+
+3. PUBLICO (sin login):
+   - Ver toda la biblioteca
+   - Descargar cualquier archivo
+   - No puede subir ni editar archivos
+
+================================================================
+
+PARA PRODUCCION
+-----------------
+1. Configure APP_ENV=production y APP_DEBUG=false en .env
+2. Ejecute: php artisan config:cache
+3. Ejecute: php artisan route:cache
+4. Ejecute: php artisan view:cache
+5. Configure su servidor web (Apache/Nginx) apuntando
+   al directorio /public del proyecto
+6. Asegurese de que upload_max_filesize y post_max_size
+   en php.ini sean >= 100M para permitir subidas grandes
+
+================================================================
+
+SOPORTE
+--------
+Para consultas tecnicas, contacte al equipo de desarrollo.
